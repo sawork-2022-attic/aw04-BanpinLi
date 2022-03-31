@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -114,8 +114,10 @@
 		<figcaption class="info-wrap">
 			<a href="#" class="title"><span th:text="${product.name}"></span></a>
 			<div class="action-wrap">
-				<a th:href="@{/add?pid={pid}(pid=${product.id})}" class="btn btn-primary btn-sm float-right"> <i
-                        class="fa fa-cart-plus"></i> Add </a>
+				<a href="#" th:href="@{/save/{productId}(productId=${product.id})}"
+                   class="btn btn-primary btn-sm float-right">
+                                            <i class="fa fa-cart-plus"></i>&nbsp;Add&nbsp;
+                                        </a>
 				<div class="price-wrap h5">
 					<span class="price-new" th:text="${product.price}"></span>
 				</div> <!-- price-wrap.// -->
@@ -154,27 +156,30 @@
 </figure>
 	</td>
 	<td class="text-center">
-		<div class="m-btn-group m-btn-group--pill btn-group mr-2" role="group" aria-label="...">
-																		<button type="button"
-                                                                                class="m-btn btn btn-default"><i
-                                                                                class="fa fa-minus"></i></button>
-																		<button type="button"
-                                                                                class="m-btn btn btn-default"
-                                                                                disabled><span
-                                                                                th:text="${item.quantity}"></span></button>
-																		<button type="button"
-                                                                                class="m-btn btn btn-default"><i
-                                                                                class="fa fa-plus"></i></button>
-																	</div>
-	</td>
+        <div class="m-btn-group m-btn-group--pill btn-group mr-2" role="group" aria-label="...">
+            <a href="#" th:href="@{/update/decr/{productId}(productId=${item.product.id})}">
+                <button type="button" class="m-btn btn btn-default">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </a>
+            <button type="button" class="m-btn btn btn-default" disabled>
+                <span th:text="${item.quantity}"></span>
+            </button>
+            <a href="#" th:href="@{/update/incr/{productId}(productId=${item.product.id})}">
+                <button type="button" class="m-btn btn btn-default">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </a>
+        </div>
+    </td>
 	<td>
 		<div class="price-wrap">
 			<var class="price"><span th:text="${item.product.price}"></span></var>
 		</div> <!-- price-wrap .// -->
 	</td>
 	<td class="text-right">
-	<a href="" class="btn btn-outline-danger"> <i class="fa fa-trash"></i></a>
-	</td>
+                                    <a href="#" th:href="@{/delete/{productId}(productId=${item.product.id})}" class="btn btn-outline-danger"> <i class="fa fa-trash"></i></a>
+                                </td>
 </tr>
 </tbody>
 </table>
@@ -200,11 +205,11 @@
                     </dl>
                     <div class="row">
                         <div class="col-md-6">
-                            <a href="#" class="btn  btn-default btn-error btn-lg btn-block"><i
+                            <a href="#" th:href="@{/cancel}" class="btn  btn-default btn-error btn-lg btn-block"><i
                                     class="fa fa-times-circle "></i> Cancel </a>
                         </div>
                         <div class="col-md-6">
-                            <a href="#" class="btn  btn-primary btn-lg btn-block"><i class="fa fa-shopping-bag"></i>
+                            <a href="#" th:href="@{/charge}" class="btn  btn-primary btn-lg btn-block"><i class="fa fa-shopping-bag"></i>
                                 Charge </a>
                         </div>
                     </div>

@@ -1,25 +1,27 @@
 package com.example.webpos.db;
 
 import com.example.webpos.model.Cart;
+import com.example.webpos.model.Item;
 import com.example.webpos.model.Product;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Repository;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
+@Component
 public class JD implements PosDB {
 
-
-    private List<Product> products = null;
+    private List<Product> products;
 
     @Override
+    @Cacheable(value = "products")
     public List<Product> getProducts() {
         try {
             if (products == null)
@@ -31,13 +33,40 @@ public class JD implements PosDB {
     }
 
     @Override
+    @Cacheable(key = "#productId", cacheNames = "product")
     public Product getProduct(String productId) {
+        System.out.println("query by id");
         for (Product p : getProducts()) {
             if (p.getId().equals(productId)) {
                 return p;
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean deleteItem(Item item, Cart cart) {
+        return cart.deleteItem(item);
+    }
+
+    @Override
+    public boolean updateItem(Item item, Cart cart) {
+        return cart.updateItem(item);
+    }
+
+    @Override
+    public boolean insertItem(Item item, Cart cart) {
+        return cart.addItem(item);
+    }
+
+    @Override
+    public Item queryItemByProductId(String productId, Cart cart) {
+        return cart.queryItemByProductId(productId);
+    }
+
+    @Override
+    public boolean deleteAllItem(Cart cart) {
+        return cart.clear();
     }
 
     public static List<Product> parseJD(String keyword) throws IOException {
@@ -62,10 +91,11 @@ public class JD implements PosDB {
             String title = el.getElementsByClass("p-name").eq(0).text();
             if (title.indexOf("，") >= 0)
                 title = title.substring(0, title.indexOf("，"));
+            if(id != null && id.length() != 0) {
+                Product product = new Product(id, title, Double.parseDouble(price), img);
+                list.add(product);
+            }
 
-            Product product = new Product(id, title, Double.parseDouble(price), img);
-
-            list.add(product);
         }
         return list;
     }
